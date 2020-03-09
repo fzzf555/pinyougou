@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+	xmlns:beans="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+						http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd">
+
+	<!-- 以下页面不被拦截 -->
+	<http pattern="/login.html" security="none"></http>
+	<http pattern="/css/**" security="none"></http>
+	<http pattern="/img/**" security="none"></http>
+	<http pattern="/js/**" security="none"></http>
+	<http pattern="/plugins/**" security="none"></http>
+	
+	<!-- 页面拦截规则 -->
+	<http use-expressions="false">
+		<!-- 用户必须拥有ROLE-XXXX的角色才能访问根目录及所属子目录的资源 -->
+		<intercept-url pattern="/**" access="ROLE_ADMIN" />
+		<!-- login-processing-url=""是用来设置登录表单提交数据的url，不设置的话默认是/login -->
+		<form-login  login-page="/login.html"  default-target-url="/admin/index.html" authentication-failure-url="/login.html" always-use-default-target="true"/>	
+		<csrf disabled="true"/>
+		<!-- 配置框架页可以使用，项目如果用的是内置框架页，不加这个配置也会被拦截 -->
+		<headers>
+			<frame-options policy="SAMEORIGIN"/>
+		</headers>
+		<logout/>
+	</http>
+
+	<!-- 认证管理器 -->
+	<authentication-manager>
+		<authentication-provider>
+			<user-service>
+				<user name="admin" password="123456" authorities="ROLE_ADMIN"/>
+				<user name="dingmengwei" password="111111" authorities="ROLE_ADMIN"/>
+			</user-service>		
+		</authentication-provider>	
+	</authentication-manager>
+</beans:beans>
